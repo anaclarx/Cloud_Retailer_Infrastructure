@@ -17,5 +17,6 @@ public class S3ListBuckets {
     ListBucketsResponse listBucketResponse = s3.listBuckets(listBucketsRequest);
     listBucketResponse.buckets().stream()
         .forEach(x -> System.out.println(x.name()));
+    
   }
 }
