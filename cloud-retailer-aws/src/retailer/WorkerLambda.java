@@ -1,4 +1,4 @@
-package retailer.lambda;
+package retailer;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import java.text.SimpleDateFormat;
