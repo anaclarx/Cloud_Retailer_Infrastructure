@@ -10,7 +10,7 @@ import retailer.SNSHandler;
 public class Client {
     public static void main(String[] args) {
     	
-    	File dir = new File("/Users/caca/Desktop/Cloud_Retailer_Infrastructure/sales-data/");
+    	File dir = new File("/Users/caca/Desktop/França/Cloud/Cloud_Retailer_Infrastructure/sales-data/");
     	
     	File[] directoryListing = dir.listFiles();
     	
@@ -25,7 +25,7 @@ public class Client {
     	        
     	        String[] snsArgs = new String[]{"arn:aws:sns:us-east-1:148253347322:retailer-data-topic", bucketName, fileName};
     	         
-    	        String filePath = "/Users/caca/Desktop/Cloud_Retailer_Infrastructure/sales-data/" + fileName;
+    	        String filePath = "/Users/caca/Desktop/França/Cloud/Cloud_Retailer_Infrastructure/sales-data/" + fileName;
     	         
     	        S3Client client = S3Client.builder().build();
     	         
