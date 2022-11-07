@@ -15,6 +15,9 @@ import software.amazon.awssdk.services.s3.model.ListObjectsResponse;
 import software.amazon.awssdk.services.s3.model.S3Object;
 
 public class Consolidator {
+	
+	public Consolidator() {}
+	
     public static void main(String[] args) {
         Region region = Region.US_EAST_1;
 
