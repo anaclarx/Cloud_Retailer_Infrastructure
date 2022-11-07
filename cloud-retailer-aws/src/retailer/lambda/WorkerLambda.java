@@ -28,28 +28,19 @@ public class WorkerLambda implements RequestHandler<S3Event, String> {
 		            StandardCharsets.UTF_8);
 		        final BufferedReader reader = new BufferedReader(streamReader)) {
 
-		      Integer[] values = new Integer[4];
-		      values[0] = 0; // total profit for each store
-		      values[1] = 0; // count
-		      values[2] = Integer.MAX_VALUE; // min
-		      values[3] = Integer.MIN_VALUE; // max
-
 		      reader.lines().forEach(line -> {
 		    	try {
 					String[] tempArr;
 					tempArr = line.split(";");
-					profit = Double.parseDouble(tempArr[6]) + profit;
+					profit = Double.parseDouble(tempArr[6]) + profit; // get total profit by store
 			    }
 		    	catch(Exception ex) 
 		    	  {
-		    	     System.out.println(ex); 
+		    	    System.out.println(ex); 
 		    	  }
 		      });
 			  System.out.println(profit);
-		      
 
-		      System.out.println("Count: " + values[1] + " Sum: " + values[0] + " Avg: " + values[0] / (double) values[1]
-		          + " Min: " + values[2] + " Max: " + values[3]);
 		    } catch (final IOException e) {
 		      System.out.println("IOException: " + e.getMessage());
 		    }
