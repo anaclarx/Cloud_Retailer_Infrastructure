@@ -11,7 +11,9 @@ import com.amazonaws.services.lambda.runtime.events.models.s3.S3EventNotificatio
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.S3Object;
-class WorkerLambda implements RequestHandler<S3Event, String> {
+public class WorkerLambda implements RequestHandler<S3Event, String> {
+	
+	  public WorkerLambda() {}
 
 	  public String handleRequest(S3Event event, Context context) {
 		    S3EventNotificationRecord record = event.getRecords().get(0);
@@ -31,16 +33,23 @@ class WorkerLambda implements RequestHandler<S3Event, String> {
 		      values[3] = Integer.MIN_VALUE; // max
 
 		      reader.lines().forEach(line -> {
-		        int value = Integer.parseInt(line);
-		        values[0] += value;
-		        values[1] += 1;
-		        if (values[2] > value) {
-		          values[2] = value;
-		        }
-		        if (values[3] < value) {
-		          values[3] = value;
-		        }
+		    	try {
+			        int value = Integer.parseInt(line.substring(0, line.length() - 1));
+			        values[0] += value;
+			        values[1] += 1;
+			        if (values[2] > value) {
+			          values[2] = value;
+			        }
+			        if (values[3] < value) {
+			          values[3] = value;
+			        }
+		      }
+		    	catch(Exception ex) 
+		    	  {
+		    	     System.out.println(ex); 
+		    	  }
 		      });
+		      
 
 		      System.out.println("Count: " + values[1] + " Sum: " + values[0] + " Avg: " + values[0] / (double) values[1]
 		          + " Min: " + values[2] + " Max: " + values[3]);
