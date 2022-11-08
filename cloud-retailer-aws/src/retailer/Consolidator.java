@@ -15,14 +15,11 @@ import software.amazon.awssdk.services.s3.model.ListObjectsResponse;
 import software.amazon.awssdk.services.s3.model.S3Object;
 
 public class Consolidator {
-	
-	public Consolidator() {}
-	
     public static void main(String[] args) {
         Region region = Region.US_EAST_1;
 
         String bucketName = "retailerbucket2212";
-        String fileDate = ;
+        String fileDate = args[0];
 
         S3Client s3 = S3Client.builder().region(region).build();
 
