@@ -22,7 +22,7 @@ public class Consolidator {
         Region region = Region.US_EAST_1;
 
         String bucketName = "retailerbucket2212";
-        String fileDate = args[0];
+        String fileDate = ;
 
         S3Client s3 = S3Client.builder().region(region).build();
 
