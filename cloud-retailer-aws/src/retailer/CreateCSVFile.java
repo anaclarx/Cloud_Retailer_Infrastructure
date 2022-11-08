@@ -1,14 +1,14 @@
-package retailer;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
-import com.opencsv.CSVReader;
-import com.opencsv.CSVWriter;
-import java.util.Enumeration;
-import java.util.Hashtable;
-
+//package retailer;
+//
+//import java.io.File;
+//import java.io.FileWriter;
+//import java.io.IOException;
+//
+//import com.opencsv.CSVReader;
+//import com.opencsv.CSVWriter;
+//import java.util.Enumeration;
+//import java.util.Hashtable;
+//
 //public class CreateCSVFile {
 //	public static void writeDataLineByLine (String filePath) {
 //		

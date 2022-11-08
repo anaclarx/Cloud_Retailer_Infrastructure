@@ -24,6 +24,8 @@ public class WorkerLambda implements RequestHandler<S3Event, String> {
 	  Hashtable<String, Double> sold = new Hashtable<String, Double>();
 
 	  Hashtable<String, Double> productsProfit = new Hashtable<String, Double>();
+	  
+	  Hashtable[] dataArray = new Hashtable[4];
 
 	  public String handleRequest(S3Event event, Context context) {
 		    S3EventNotificationRecord record = event.getRecords().get(0);
@@ -78,10 +80,15 @@ public class WorkerLambda implements RequestHandler<S3Event, String> {
 		    	  }
 		      });
 		      
-			  System.out.println(profit);
-			  System.out.println(quantity);
-			  System.out.println(productsProfit);
-			  System.out.println(sold);
+		      dataArray[0] = profit;
+		      dataArray[1] = quantity;
+		      dataArray[2] = productsProfit;
+		      dataArray[3] = sold;
+		      
+//			  System.out.println(profit);
+//			  System.out.println(quantity);
+//			  System.out.println(productsProfit);
+			  System.out.println(dataArray);
 
 		    } catch (final IOException e) {
 		      System.out.println("IOException: " + e.getMessage());
