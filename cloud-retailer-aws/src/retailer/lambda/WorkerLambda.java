@@ -42,28 +42,30 @@ public class WorkerLambda implements RequestHandler<S3Event, String> {
 					tempArr = line.split(";");
 
 					// get total profit by store
-					if (profit.get(tempArr[1]) == null){
+					if (profit.get(tempArr[1]) != null){
+						
 						profit.put(tempArr[1], Double.parseDouble(tempArr[6])*Integer.parseInt(tempArr[3]) + profit.get(tempArr[1]));
 					} else {
 						profit.put(tempArr[1], Double.parseDouble(tempArr[6])*Integer.parseInt(tempArr[3]));
 					}
 
 					// get total quantity by product by store
-					if (quantity.get(tempArr[2]) == null){
+					if (quantity.get(tempArr[2]) != null){
+						
 						quantity.put(tempArr[2], quantity.get(tempArr[2]) + Integer.parseInt(tempArr[3]));
 					} else {
 						quantity.put(tempArr[2], Integer.parseInt(tempArr[3]));
 					}					
 
 					// get total sold by product by store
-					if (sold.get(tempArr[2]) == null){
+					if (sold.get(tempArr[2]) != null){
 						sold.put(tempArr[2], sold.get(tempArr[2]) + Double.parseDouble(tempArr[7]));
 					} else {
 						sold.put(tempArr[2], Double.parseDouble(tempArr[7]));
 					}
 
 					// get total profit by product by store
-					if (productsProfit.get(tempArr[2]) == null){
+					if (productsProfit.get(tempArr[2]) != null){
 						productsProfit.put(tempArr[2], productsProfit.get(tempArr[2]) + Double.parseDouble(tempArr[6]));
 					} else {
 						productsProfit.put(tempArr[2], Double.parseDouble(tempArr[6]));
@@ -75,8 +77,11 @@ public class WorkerLambda implements RequestHandler<S3Event, String> {
 		    	    System.out.println(ex); 
 		    	  }
 		      });
+		      
 			  System.out.println(profit);
 			  System.out.println(quantity);
+			  System.out.println(productsProfit);
+			  System.out.println(sold);
 
 		    } catch (final IOException e) {
 		      System.out.println("IOException: " + e.getMessage());
