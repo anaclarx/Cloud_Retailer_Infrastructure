@@ -19,6 +19,12 @@ public class Consolidator {
         Region region = Region.US_EAST_1;
 
         String bucketName = "retailerbucket2212";
+
+        if (args.length < 1) {
+            System.out.println("Missing the file date argument");
+            System.exit(1);
+          }
+
         String fileDate = args[0];
 
         S3Client s3 = S3Client.builder().region(region).build();
