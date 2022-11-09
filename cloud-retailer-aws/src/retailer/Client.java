@@ -30,9 +30,10 @@ public class Client {
     	        S3Client client = S3Client.builder().build();
     	         
     	        PutObjectRequest request = PutObjectRequest.builder()
-    	                            .bucket(bucketName).key(fileName).build();
+    	                            .bucket(bucketName).key("sales-data/" + fileName).build();
     	         
     	        client.putObject(request, RequestBody.fromFile(new File(filePath)));
+    	      
     	        
     	        sns.main(snsArgs);
     	        
