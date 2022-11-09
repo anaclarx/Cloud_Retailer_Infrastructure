@@ -1,5 +1,7 @@
 package retailer;
 
+import java.nio.charset.StandardCharsets;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -23,7 +25,7 @@ public class Consolidator {
         if (args.length < 1) {
             System.out.println("Missing the file date argument");
             System.exit(1);
-          }
+        }
 
         String fileDate = args[0];
 
@@ -42,8 +44,7 @@ public class Consolidator {
         GetObjectRequest objectRequest = GetObjectRequest.builder().key(fileDate)
             .bucket(bucketName).build();
 
-        ResponseBytes<
-            GetObjectResponse> objectBytes = s3.getObjectAsBytes(objectRequest);
+        ResponseBytes<GetObjectResponse> objectBytes = s3.getObjectAsBytes(objectRequest);
         byte[] data = objectBytes.asByteArray();
 
         File file = new File(fileDate);
@@ -52,6 +53,13 @@ public class Consolidator {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        // read what we wrote
+        String dataString = new String(data, StandardCharsets.UTF_8);
+        System.out.println(dataString);
+
+        // manipulating the data
+
 
         }
     }
