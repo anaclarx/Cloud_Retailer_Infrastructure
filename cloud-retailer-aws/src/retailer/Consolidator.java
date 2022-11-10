@@ -59,7 +59,11 @@ public class Consolidator {
         System.out.println(dataString);
 
         // manipulating the data
-
+        String[] tempArray = dataString.split("\\n");
+        String[] dataArray = new String[6]; //verificar se isso está certo
+        for (int i = 0; i < tempArray.length; i++){
+            dataArray[i] = tempArray[i].split(",");
+        }
 
         }
     }
