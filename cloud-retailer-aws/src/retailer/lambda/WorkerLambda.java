@@ -104,7 +104,7 @@ public class WorkerLambda implements RequestHandler<S3Event, String> {
 		      
 	          
 	         // File csvOutPutData = new File("/Users/caca/Desktop/França/Cloud/Cloud_Retailer_Infrastructure/sales-data/"+fileKey);
-		      File csvOutPutData = File.createTempFile("data-output"+fileKey, ".csv");
+		      File csvOutPutData = File.createTempFile(fileKey + "-output", ".csv");
 		      try {
 		    	  
 		    	  FileWriter outputfile = new FileWriter(csvOutPutData);
@@ -141,7 +141,7 @@ public class WorkerLambda implements RequestHandler<S3Event, String> {
 //		    	              .build();
 //         
 //		    	Upload upload = tm.upload(bucketName, fileKey, csvOutPutData);
-		    	s3Client.putObject(bucketName, csvOutPutData.getName(), csvOutPutData);
+		    	s3Client.putObject("summaryretailerbucket2212", "output-" + csvOutPutData.getName(), csvOutPutData);
 
 		      
 		      
