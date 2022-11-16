@@ -141,7 +141,7 @@ public class WorkerLambda implements RequestHandler<S3Event, String> {
 //		    	              .build();
 //         
 //		    	Upload upload = tm.upload(bucketName, fileKey, csvOutPutData);
-		    	s3Client.putObject("summaryretailerbucket2212", "output-" + csvOutPutData.getName(), csvOutPutData);
+		    	s3Client.putObject("summaryretailerbucket2212", csvOutPutData.getName() + "-output", csvOutPutData);
 
 		      
 		      
