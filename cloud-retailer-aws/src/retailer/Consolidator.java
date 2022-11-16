@@ -40,30 +40,34 @@ public class Consolidator {
 
         if (objects.stream().anyMatch((S3Object x) -> x.key().equals(fileDate))) {
 
-        // Retrieve file
-        GetObjectRequest objectRequest = GetObjectRequest.builder().key(fileDate)
-            .bucket(bucketName).build();
+            // Retrieve file
+            GetObjectRequest objectRequest = GetObjectRequest.builder().key(fileDate)
+                .bucket(bucketName).build();
 
-        ResponseBytes<GetObjectResponse> objectBytes = s3.getObjectAsBytes(objectRequest);
-        byte[] data = objectBytes.asByteArray();
+            ResponseBytes<GetObjectResponse> objectBytes = s3.getObjectAsBytes(objectRequest);
+            byte[] data = objectBytes.asByteArray();
 
-        File file = new File(fileDate);
-        try (OutputStream os = new FileOutputStream(file)) {
-            os.write(data);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            File file = new File(fileDate);
+            try (OutputStream os = new FileOutputStream(file)) {
+                os.write(data);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-        // read what we wrote
-        String dataString = new String(data, StandardCharsets.UTF_8);
-        System.out.println(dataString);
+            // read what we wrote
+            String dataString = new String(data, StandardCharsets.UTF_8);
+            System.out.println(dataString);
 
-        // manipulating the data
-        String[] tempArray = dataString.split("\\n");
-        String[] dataArray = new String[6]; //verificar se isso está certo
-        for (int i = 0; i < tempArray.length; i++){
-            dataArray[i] = tempArray[i].split(",");
-        }
+            // manipulating the data
+            String[] tempArray = dataString.split("\\n");
+            String[][] dataArray = new dataArray[tempArray.length][]
+            for (int i =0; i < tempArray.length; i++){
+                dataArray[i] = tempArray[i].split(";");
+            }
+            
+            // for (int i = 0; i < tempArray.length; i++){
+            //     dataArray[i] = tempArray[i].split(",");
+            // }
 
         }
     }
