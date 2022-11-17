@@ -12,65 +12,93 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
-import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsResponse;
 import software.amazon.awssdk.services.s3.model.S3Object;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.amazonaws.AmazonClientException;
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.EnvironmentVariableCredentialsProvider;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.DeleteObjectsRequest;
+import com.amazonaws.services.s3.model.ListObjectsRequest;
+import com.amazonaws.services.s3.model.ObjectListing;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 
 public class Consolidator {
     public static void main(String[] args) {
         Region region = Region.US_EAST_1;
 
-        String bucketName = "retailerbucket2212";
         
         System.out.println("ENTRANDO NA FUNCAO");
+        
+        
+        String bucketName = "summaryretailerbucket2212";
+        
+        AmazonS3 s3Client = AmazonS3ClientBuilder.defaultClient();
+        
+        S3Client s3 = S3Client.builder().region(region).build();
         
         if (args.length < 1) {
             System.out.println("Missing the file date argument");
             System.exit(1);
         }
+        
+    	ListObjectsRequest listObjectsRequest = new ListObjectsRequest()
+                .withBucketName(bucketName)
+                .withPrefix(args[0]);
 
-        String fileDate = args[0];
+    	List<String> keys = new ArrayList<>();
 
-        S3Client s3 = S3Client.builder().region(region).build();
+    	ObjectListing objects = s3Client.listObjects(listObjectsRequest);
 
-        // Check file exists
-        ListObjectsRequest listObjects = ListObjectsRequest.builder()
-            .bucket(bucketName).build();
+    	for (;;) {
+    		List<S3ObjectSummary> summaries = objects.getObjectSummaries();
+    		if (summaries.size() < 1) {
+    			break;
+    		}
 
-        ListObjectsResponse res = s3.listObjects(listObjects);
-        List<S3Object> objects = res.contents();
+    		summaries.forEach(s -> keys.add(s.getKey()));
+    		objects = s3Client.listNextBatchOfObjects(objects);
+    	}
+    	
+    	
+    	for (String element : keys) {
 
-        if (objects.stream().anyMatch((S3Object x) -> x.key().equals(fileDate))) {
+                // Retrieve file
+                GetObjectRequest objectRequest = GetObjectRequest.builder().key(element)
+                    .bucket(bucketName).build();
 
-            // Retrieve file
-            GetObjectRequest objectRequest = GetObjectRequest.builder().key(fileDate)
-                .bucket(bucketName).build();
+                ResponseBytes<GetObjectResponse> objectBytes = s3.getObjectAsBytes(objectRequest);
+                byte[] data = objectBytes.asByteArray();
 
-            ResponseBytes<GetObjectResponse> objectBytes = s3.getObjectAsBytes(objectRequest);
-            byte[] data = objectBytes.asByteArray();
+                File file = new File(element);
+                try (OutputStream os = new FileOutputStream(file)) {
+                    os.write(data);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
-            File file = new File(fileDate);
-            try (OutputStream os = new FileOutputStream(file)) {
-                os.write(data);
-            } catch (IOException e) {
-                e.printStackTrace();
+                // read what we wrote
+                String dataString = new String(data, StandardCharsets.UTF_8);
+                System.out.println(dataString);
+
+                // manipulating the data
+                String[] tempArray = dataString.split("\\n");
+                String[][] dataArray = new String[tempArray.length][6];
+                for (int i =0; i < tempArray.length; i++){
+                    dataArray[i] = tempArray[i].split(";");
+                }
+                
+                System.out.println(dataArray);
+                
             }
+    	}
 
-            // read what we wrote
-            String dataString = new String(data, StandardCharsets.UTF_8);
-            System.out.println(dataString);
-
-            // manipulating the data
-            String[] tempArray = dataString.split("\\n");
-            String[][] dataArray = new dataArray[tempArray.length][]
-            for (int i =0; i < tempArray.length; i++){
-                dataArray[i] = tempArray[i].split(";");
-            }
-            
-            // for (int i = 0; i < tempArray.length; i++){
-            //     dataArray[i] = tempArray[i].split(",");
-            // }
-
-        }
     }
-}
