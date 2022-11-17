@@ -21,7 +21,9 @@ public class Consolidator {
         Region region = Region.US_EAST_1;
 
         String bucketName = "retailerbucket2212";
-
+        
+        System.out.println("ENTRANDO NA FUNCAO");
+        
         if (args.length < 1) {
             System.out.println("Missing the file date argument");
             System.exit(1);

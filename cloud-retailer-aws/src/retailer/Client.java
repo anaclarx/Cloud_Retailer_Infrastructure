@@ -1,12 +1,16 @@
 package retailer;
 
 import java.io.File;
- 
+import java.security.Timestamp;
+
 import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import retailer.SNSHandler;
- 
+import software.amazon.awssdk.services.sqs.SqsClient;
+import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
+import software.amazon.awssdk.services.sqs.model.SendMessageResponse;
+
 public class Client {
     public static void main(String[] args) {
     	
@@ -14,16 +18,18 @@ public class Client {
     	
     	File[] directoryListing = dir.listFiles();
     	
+    	String queueURL = "https://sqs.us-east-1.amazonaws.com/148253347322/retailer-files-queue";
+    	
     	if (directoryListing != null) {
     		for (File child : directoryListing) {
-    			
-    			SNSHandler sns = new SNSHandler();
     			
     			String bucketName = "retailerbucket2212";
     	        
     	        String fileName = child.getName();
     	        
-    	        String[] snsArgs = new String[]{"arn:aws:sns:us-east-1:148253347322:retailer-data-topic", bucketName, fileName};
+    	        //String[] snsArgs = new String[]{"arn:aws:sns:us-east-1:148253347322:retailer-data-topic", bucketName, fileName};
+    	        
+    	        String[] sqsArgs = new String[]{bucketName, fileName, queueURL};
     	         
     	        String filePath = "/Users/caca/Desktop/França/Cloud/Cloud_Retailer_Infrastructure/sales-data/" + fileName;
     	         
@@ -35,7 +41,9 @@ public class Client {
     	        client.putObject(request, RequestBody.fromFile(new File(filePath)));
     	      
     	        
-    	        sns.main(snsArgs);
+    	        //sns.main(snsArgs);
+    	        SQSHandler.main(sqsArgs);
+    	        //sendSQS(bucketName, fileName, queueURL);
     	        
     		 }
     	} else {
@@ -44,6 +52,7 @@ public class Client {
 
                  
     }
+    
 }
 
 
