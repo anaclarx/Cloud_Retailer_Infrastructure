@@ -42,7 +42,7 @@ public class Client {
     	      
     	        
     	        //sns.main(snsArgs);
-    	        SQSHandler.main(sqsArgs);
+    	        //SQSHandler.main(sqsArgs);
     	        //sendSQS(bucketName, fileName, queueURL);
     	        
     		 }

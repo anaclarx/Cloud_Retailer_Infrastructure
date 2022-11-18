@@ -48,119 +48,122 @@ public class WorkerLambda implements RequestHandler<S3Event, String> {
 	  
 	  //Hashtable[] dataArray = new Hashtable[4];
 
-	  public String handleRequest(S3Event event, Context context) {
-		    S3EventNotificationRecord record = event.getRecords().get(0);
-		    String bucketName = "retailerbucket2212";
-		    String fileKey = record.getS3().getObject().getUrlDecodedKey();
+	  public String handleRequest(S3Event request, Context context) {
+	        request.getRecords().forEach(record -> {
+	            //System.out.println(record.getS3().getObject().getKey());
+			    String bucketName = "retailerbucket2212";
+			    String fileKey = record.getS3().getObject().getUrlDecodedKey();
 
-		    AmazonS3 s3Client = AmazonS3ClientBuilder.defaultClient();
-		    try (final S3Object s3Object = s3Client.getObject(bucketName, fileKey);
-		        final InputStreamReader streamReader = new InputStreamReader(s3Object.getObjectContent(),
-		            StandardCharsets.UTF_8);
-		        final BufferedReader reader = new BufferedReader(streamReader)) {
+			    AmazonS3 s3Client = AmazonS3ClientBuilder.defaultClient();
+			    try (final S3Object s3Object = s3Client.getObject(bucketName, fileKey);
+			        final InputStreamReader streamReader = new InputStreamReader(s3Object.getObjectContent(),
+			            StandardCharsets.UTF_8);
+			        final BufferedReader reader = new BufferedReader(streamReader)) {
 
-		      reader.lines().forEach(line -> {
-		    	try {
-					String[] tempArr;
-					tempArr = line.split(";");
+			      reader.lines().forEach(line -> {
+			    	try {
+						String[] tempArr;
+						tempArr = line.split(";");
 
-					// get total profit by store
-					if (profit.get(tempArr[1]) != null){
-						
-						profit.put(tempArr[1], Double.parseDouble(tempArr[6])*Integer.parseInt(tempArr[3]) + profit.get(tempArr[1]));
-					} else {
-						profit.put(tempArr[1], Double.parseDouble(tempArr[6])*Integer.parseInt(tempArr[3]));
-					}
+						// get total profit by store
+						if (profit.get(tempArr[1]) != null){
+							
+							profit.put(tempArr[1], Double.parseDouble(tempArr[6])*Integer.parseInt(tempArr[3]) + profit.get(tempArr[1]));
+						} else {
+							profit.put(tempArr[1], Double.parseDouble(tempArr[6])*Integer.parseInt(tempArr[3]));
+						}
 
-					// get total quantity by product by store
-					if (quantity.get(tempArr[2]) != null){
-						
-						quantity.put(tempArr[2], quantity.get(tempArr[2]) + Integer.parseInt(tempArr[3]));
-					} else {
-						quantity.put(tempArr[2], Integer.parseInt(tempArr[3]));
-					}					
+						// get total quantity by product by store
+						if (quantity.get(tempArr[2]) != null){
+							
+							quantity.put(tempArr[2], quantity.get(tempArr[2]) + Integer.parseInt(tempArr[3]));
+						} else {
+							quantity.put(tempArr[2], Integer.parseInt(tempArr[3]));
+						}					
 
-					// get total sold by product by store
-					if (sold.get(tempArr[2]) != null){
-						sold.put(tempArr[2], sold.get(tempArr[2]) + Double.parseDouble(tempArr[7]));
-					} else {
-						sold.put(tempArr[2], Double.parseDouble(tempArr[7]));
-					}
+						// get total sold by product by store
+						if (sold.get(tempArr[2]) != null){
+							sold.put(tempArr[2], sold.get(tempArr[2]) + Double.parseDouble(tempArr[7]));
+						} else {
+							sold.put(tempArr[2], Double.parseDouble(tempArr[7]));
+						}
 
-					// get total profit by product by store
-					if (productsProfit.get(tempArr[2]) != null){
-						productsProfit.put(tempArr[2], productsProfit.get(tempArr[2]) + Double.parseDouble(tempArr[6]));
-					} else {
-						productsProfit.put(tempArr[2], Double.parseDouble(tempArr[6]));
-					}
+						// get total profit by product by store
+						if (productsProfit.get(tempArr[2]) != null){
+							productsProfit.put(tempArr[2], productsProfit.get(tempArr[2]) + Double.parseDouble(tempArr[6]));
+						} else {
+							productsProfit.put(tempArr[2], Double.parseDouble(tempArr[6]));
+						}
 
+				    }
+			    	catch(Exception ex) 
+			    	  {
+			    	    System.out.println(ex); 
+			    	  }
+			      });
+
+			      
+		          
+		         // File csvOutPutData = new File("/Users/caca/Desktop/França/Cloud/Cloud_Retailer_Infrastructure/sales-data/"+fileKey);
+			      File csvOutPutData = File.createTempFile(fileKey + "-output", ".csv");
+			      try {
+			    	  
+			    	  FileWriter outputfile = new FileWriter(csvOutPutData);
+					  CSVWriter writer = new CSVWriter(outputfile);
+					  String[] header = {"Store", "Store Profit", "Product", "Product Profit", "Product Quantity", "Product Sold"};
+					  writer.writeNext(header);
+					  
+					  Set<String> storeKeys = profit.keySet();
+					  Set<String> productKeys = quantity.keySet();
+					  String keyStore, storeProfit, keyProduct, productProfit, productQuantity, productSold;
+					  
+					  
+					  for(String key: productKeys) {
+						  System.out.println(key);
+						  keyStore = (String) profit.keySet().toArray()[0];
+						  storeProfit = profit.get(keyStore).toString();
+						  keyProduct = key;
+						  productProfit = productsProfit.get(key).toString();
+						  productQuantity = quantity.get(key).toString();
+						  productSold = sold.get(key).toString();
+						  String[] data = {keyStore, storeProfit, keyProduct, productProfit, productQuantity, productSold};
+						  writer.writeNext(data);
+					  }
+					  
+
+					  writer.close();  
+			      }
+			      catch(IOException e){
+			    	  e.printStackTrace();		    	  
+			      }
+			    	System.out.println("Uploading a new object to S3 from a file\n");
+//			    	TransferManager tm = TransferManagerBuilder.standard()
+//			    	              .withS3Client(s3Client)
+//			    	              .build();
+//	         
+//			    	Upload upload = tm.upload(bucketName, fileKey, csvOutPutData);
+			    	s3Client.putObject("summaryretailerbucket2212", csvOutPutData.getName() + "-output", csvOutPutData);
+
+			      
+			      
+//			      dataArray[0] = profit;
+//			      dataArray[1] = quantity;
+//			      dataArray[2] = productsProfit;
+//			      dataArray[3] = sold;
+			      
+				  System.out.println(profit);
+				  System.out.println(quantity);
+				  System.out.println(productsProfit);
+				  System.out.println();
+
+			    } catch (final IOException e) {
+			      System.out.println("IOException: " + e.getMessage());
 			    }
-		    	catch(Exception ex) 
-		    	  {
-		    	    System.out.println(ex); 
-		    	  }
-		      });
 
-		      
-	          
-	         // File csvOutPutData = new File("/Users/caca/Desktop/França/Cloud/Cloud_Retailer_Infrastructure/sales-data/"+fileKey);
-		      File csvOutPutData = File.createTempFile(fileKey + "-output", ".csv");
-		      try {
-		    	  
-		    	  FileWriter outputfile = new FileWriter(csvOutPutData);
-				  CSVWriter writer = new CSVWriter(outputfile);
-				  String[] header = {"Store", "Store Profit", "Product", "Product Profit", "Product Quantity", "Product Sold"};
-				  writer.writeNext(header);
-				  
-				  Set<String> storeKeys = profit.keySet();
-				  Set<String> productKeys = quantity.keySet();
-				  String keyStore, storeProfit, keyProduct, productProfit, productQuantity, productSold;
-				  
-				  
-				  for(String key: productKeys) {
-					  System.out.println(key);
-					  keyStore = (String) profit.keySet().toArray()[0];
-					  storeProfit = profit.get(keyStore).toString();
-					  keyProduct = key;
-					  productProfit = productsProfit.get(key).toString();
-					  productQuantity = quantity.get(key).toString();
-					  productSold = sold.get(key).toString();
-					  String[] data = {keyStore, storeProfit, keyProduct, productProfit, productQuantity, productSold};
-					  writer.writeNext(data);
-				  }
-				  
-
-				  writer.close();  
-		      }
-		      catch(IOException e){
-		    	  e.printStackTrace();		    	  
-		      }
-		    	System.out.println("Uploading a new object to S3 from a file\n");
-//		    	TransferManager tm = TransferManagerBuilder.standard()
-//		    	              .withS3Client(s3Client)
-//		    	              .build();
-//         
-//		    	Upload upload = tm.upload(bucketName, fileKey, csvOutPutData);
-		    	s3Client.putObject("summaryretailerbucket2212", csvOutPutData.getName() + "-output", csvOutPutData);
-
-		      
-		      
-//		      dataArray[0] = profit;
-//		      dataArray[1] = quantity;
-//		      dataArray[2] = productsProfit;
-//		      dataArray[3] = sold;
-		      
-			  System.out.println(profit);
-			  System.out.println(quantity);
-			  System.out.println(productsProfit);
-			  System.out.println();
-
-		    } catch (final IOException e) {
-		      System.out.println("IOException: " + e.getMessage());
-		    }
-
-		    System.out.println("Finished... processing file");
-		    return "Ok";
+			    System.out.println("Finished... processing file");
+	        });
+		    //S3EventNotificationRecord record = event.getRecords().get(0);
+	        return "success";
 	}
 }
 
