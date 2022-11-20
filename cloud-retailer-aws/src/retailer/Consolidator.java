@@ -12,23 +12,11 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
-import software.amazon.awssdk.services.s3.model.ListObjectsResponse;
-import software.amazon.awssdk.services.s3.model.S3Object;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-
 import java.util.Hashtable;
 
-import com.amazonaws.AmazonClientException;
-import com.amazonaws.AmazonServiceException;
-import com.amazonaws.auth.AWSCredentialsProvider;
-import com.amazonaws.auth.EnvironmentVariableCredentialsProvider;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.DeleteObjectsRequest;
 import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
@@ -99,7 +87,6 @@ public class Consolidator {
                 // manipulating the data
                 String[] tempArray = dataString.split("\\n");
                 String[][] dataArray = new String[tempArray.length - 1][6];
-                String[][] products = new String[dataArray.length][4];
                 for (int i = 1; i < tempArray.length; i++){ //start in i = 1 not to get the header of the csv file
                     dataArray[i] = tempArray[i].split(",");
 
