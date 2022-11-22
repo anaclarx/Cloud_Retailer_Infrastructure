@@ -141,8 +141,9 @@ public class Consolidator {
                 
                 
 				//PROFIT STORE
-                System.out.println(dataArray);
-                System.out.println(dataArray[1][1]);
+//                System.out.println(dataArray);
+//                System.out.println(dataArray);
+//                System.out.println("Loja em questao: "+ dataArray[1][0]);
                 StringBuilder profitStoreProduct = new StringBuilder(dataArray[1][1]);
 				profitStoreProduct.deleteCharAt(0);
 				profitStoreProduct.deleteCharAt(dataArray[1][1].length() - 2);
@@ -163,19 +164,18 @@ public class Consolidator {
                     smallestProfit = Double.parseDouble(profitStoreFinal);
                     leastProfitableStore = dataArray[1][0];
                 }
-                
-                System.out.println("Total Retailer's Profit: " + profitRetailer);
-
-                System.out.println("Least Profitable Store: " + leastProfitableStore);
-
-                System.out.println("Most Profitable Store: " + mostProfitableStore);
-
-                System.out.println("Products Informations: ");
-                profit.forEach( (k, v) -> System.out.println("Product : " + k + ", Profit : " + v)); 
-                quantity.forEach( (k, v) -> System.out.println("Product : " + k + ", Quantity : " + v)); 
-                sold.forEach( (k, v) -> System.out.println("Product : " + k + ", Sold : " + v)); 
-                
+   
             }
+        System.out.println("Total Retailer's Profit: " + profitRetailer);
+
+        System.out.println("Least Profitable Store: " + leastProfitableStore);
+
+        System.out.println("Most Profitable Store: " + mostProfitableStore);
+        
+    	System.out.println("Products Informations: ");
+    	profit.forEach( (k, v) -> System.out.println("Product : " + k + ", Profit : " + v)); 
+        quantity.forEach( (k, v) -> System.out.println("Product : " + k + ", Quantity : " + v)); 
+        sold.forEach( (k, v) -> System.out.println("Product : " + k + ", Sold : " + v));
     	}
 
     }

@@ -50,6 +50,10 @@ public class WorkerLambda implements RequestHandler<S3Event, String> {
 
 	  public String handleRequest(S3Event request, Context context) {
 	        request.getRecords().forEach(record -> {
+	        	profit.clear();
+	        	quantity.clear();
+	        	sold.clear();
+	        	productsProfit.clear();
 	            //System.out.println(record.getS3().getObject().getKey());
 			    String bucketName = "retailerbucket2212";
 			    String fileKey = record.getS3().getObject().getUrlDecodedKey();
